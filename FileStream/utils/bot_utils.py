@@ -79,7 +79,7 @@ async def is_user_joined(bot, message: Message):
 
 #---------------------[ PRIVATE GEN LINK + CALLBACK ]---------------------#
 
-async def gen_link(_id):
+async def gen_link(_id, uid):
     file_info = await db.get_file(_id)
     file_name = file_info['file_name']
     file_size = humanbytes(file_info['file_size'])
@@ -94,8 +94,8 @@ async def gen_link(_id):
         reply_markup = InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("Stream", url=page_link), InlineKeyboardButton("Download", url=stream_link)],
-                [InlineKeyboardButton("Ambil File", url=file_link), InlineKeyboardButton("Hapus File", callback_data=f"msgdelpvt_{_id}")],
-                [InlineKeyboardButton("Tutup", callback_data="close")]
+                [InlineKeyboardButton("Ambil File", url=file_link), InlineKeyboardButton("Hapus File", callback_data=f"{uid}_msgdelpvt_{_id}")],
+                [InlineKeyboardButton("Tutup", callback_data=f"{uid}_close")]
             ]
         )
     else:
@@ -103,8 +103,8 @@ async def gen_link(_id):
         reply_markup = InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("Download", url=stream_link)],
-                [InlineKeyboardButton("Ambil File", url=file_link), InlineKeyboardButton("Hapus File", callback_data=f"msgdelpvt_{_id}")],
-                [InlineKeyboardButton("Tutup", callback_data="close")]
+                [InlineKeyboardButton("Ambil File", url=file_link), InlineKeyboardButton("Hapus File", callback_data=f"{uid}_msgdelpvt_{_id}")],
+                [InlineKeyboardButton("Tutup", callback_data=f"{uid}_close")]
             ]
         )
     return reply_markup, stream_text

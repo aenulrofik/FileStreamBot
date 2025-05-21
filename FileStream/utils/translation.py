@@ -32,7 +32,8 @@ class LANG(object):
 
 
 class BUTTON(object):
-    START_BUTTONS = InlineKeyboardMarkup(
+    def START_BUTTONS(uid):
+        InlineKeyboardMarkup(
         [[
             InlineKeyboardButton('Bantuan', callback_data='help'),
             InlineKeyboardButton('Tentang', callback_data='about'),
@@ -41,7 +42,8 @@ class BUTTON(object):
             [InlineKeyboardButton("📢 Channel Update", url=f'https://t.me/{Telegram.UPDATES_CHANNEL}')]
         ]
     )
-    HELP_BUTTONS = InlineKeyboardMarkup(
+    def HELP_BUTTONS(uid):
+        InlineKeyboardMarkup(
         [[
             InlineKeyboardButton('Bantuan', callback_data='help'),
             InlineKeyboardButton('Tentang', callback_data='about'),
@@ -50,7 +52,8 @@ class BUTTON(object):
             [InlineKeyboardButton("📢 Channel Update", url=f'https://t.me/{Telegram.UPDATES_CHANNEL}')]
         ]
     )
-    ABOUT_BUTTONS = InlineKeyboardMarkup(
+    def ABOUT_BUTTONS(uid):
+        InlineKeyboardMarkup(
         [[
             InlineKeyboardButton('Bantuan', callback_data='help'),
             InlineKeyboardButton('Tentang', callback_data='about'),

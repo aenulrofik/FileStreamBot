@@ -19,21 +19,21 @@ async def start(bot: Client, message: Message):
     if not await verify_user(bot, message):
         return
     usr_cmd = message.text.split("_")[-1]
-
+    uid = message.from_user.id
     if usr_cmd == "/start":
         if Telegram.START_PIC:
             await message.reply_photo(
                 photo=Telegram.START_PIC,
                 caption=LANG.START_TEXT.format(message.from_user.mention, FileStream.username),
                 parse_mode=ParseMode.HTML,
-                reply_markup=BUTTON.START_BUTTONS
+                reply_markup=BUTTON.START_BUTTONS(uid)
             )
         else:
             await message.reply_text(
                 text=LANG.START_TEXT.format(message.from_user.mention, FileStream.username),
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
-                reply_markup=BUTTON.START_BUTTONS
+                reply_markup=BUTTON.START_BUTTONS(uid)
             )
     else:
         if "stream_" in message.text:
@@ -85,18 +85,19 @@ async def start(bot: Client, message: Message):
 async def start(bot, message):
     if not await verify_user(bot, message):
         return
+    uid = message.from_user.id
     if Telegram.START_PIC:
         await message.reply_photo(
             photo=Telegram.START_PIC,
             caption=LANG.ABOUT_TEXT.format(FileStream.fname, __version__),
             parse_mode=ParseMode.HTML,
-            reply_markup=BUTTON.ABOUT_BUTTONS
+            reply_markup=BUTTON.ABOUT_BUTTONS(uid)
         )
     else:
         await message.reply_text(
             text=LANG.ABOUT_TEXT.format(FileStream.fname, __version__),
             disable_web_page_preview=True,
-            reply_markup=BUTTON.ABOUT_BUTTONS
+            reply_markup=BUTTON(uid).ABOUT_BUTTONS(uid)
         )
 
 @FileStream.on_message((filters.command('help')))
@@ -108,14 +109,14 @@ async def help_handler(bot, message):
             photo=Telegram.START_PIC,
             caption=LANG.HELP_TEXT.format(Telegram.OWNER_ID),
             parse_mode=ParseMode.HTML,
-            reply_markup=BUTTON.HELP_BUTTONS
+            reply_markup=BUTTON.HELP_BUTTONS(message.from_user.id)
         )
     else:
         await message.reply_text(
             text=LANG.HELP_TEXT.format(Telegram.OWNER_ID),
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=True,
-            reply_markup=BUTTON.HELP_BUTTONS
+            reply_markup=BUTTON.HELP_BUTTONS(message.from_user.id)
         )
 
 # ---------------------------------------------------------------------------------------------------
@@ -125,23 +126,23 @@ async def my_files(bot: Client, message: Message):
     if not await verify_user(bot, message):
         return
     user_files, total_files = await db.find_files(message.from_user.id, [1, 10])
-
+    uid = message.from_user.id
     file_list = []
     async for x in user_files:
-        file_list.append([InlineKeyboardButton(x["file_name"], callback_data=f"myfile_{x['_id']}_{1}")])
+        file_list.append([InlineKeyboardButton(x["file_name"], callback_data=f"{uid}_myfile_{x['_id']}_{1}")])
     if total_files > 10:
         file_list.append(
             [
-                InlineKeyboardButton("◄", callback_data="N/A"),
-                InlineKeyboardButton(f"1/{math.ceil(total_files / 10)}", callback_data="N/A"),
-                InlineKeyboardButton("►", callback_data="userfiles_2")
+                InlineKeyboardButton("◄", callback_data=f"{uid}_N/A"),
+                InlineKeyboardButton(f"1/{math.ceil(total_files / 10)}", callback_data=f"{uid}_N/A"),
+                InlineKeyboardButton("►", callback_data=f"{uid}_userfiles_2")
             ],
         )
     if not file_list:
         file_list.append(
-            [InlineKeyboardButton("Kosong", callback_data="N/A")],
+            [InlineKeyboardButton("Kosong", callback_data=f"{uid}_N/A")],
         )
-    file_list.append([InlineKeyboardButton("Tutup", callback_data="close")])
+    file_list.append([InlineKeyboardButton("Tutup", callback_data=f"{uid}_close")])
     await message.reply_photo(photo=Telegram.FILE_PIC,
                               caption="Total files: {}".format(total_files),
                               reply_markup=InlineKeyboardMarkup(file_list))

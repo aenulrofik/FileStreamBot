@@ -34,10 +34,11 @@ async def private_receive_handler(bot: Client, message: Message):
     if Telegram.FORCE_SUB:
         if not await is_user_joined(bot, message):
             return
+    uid = message.from_user.id
     try:
         inserted_id = await db.add_file(get_file_info(message))
         await get_file_ids(False, inserted_id, multi_clients, message)
-        reply_markup, stream_text = await gen_link(_id=inserted_id)
+        reply_markup, stream_text = await gen_link(_id=inserted_id, uid=uid)
         await message.reply_text(
             text=stream_text,
             parse_mode=ParseMode.HTML,
@@ -83,10 +84,11 @@ async def stream_reply_handler(bot: Client, message: Message):
             quote=True
         )
 
+    uid = message.from_user.id
     try:
         inserted_id = await db.add_file(get_file_info(replied_msg, reply=True))
         await get_file_ids(False, inserted_id, multi_clients, replied_msg)
-        reply_markup, stream_text = await gen_link(_id=inserted_id)
+        reply_markup, stream_text = await gen_link(_id=inserted_id, uid = uid)
         await message.reply_text(
             text=stream_text,
             parse_mode=ParseMode.HTML,
